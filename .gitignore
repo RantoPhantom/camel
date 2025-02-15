@@ -1,3 +1,4 @@
+*.sqlite
 # ai models directory
 model/
 # Byte-compiled / optimized / DLL files
