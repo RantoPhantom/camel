@@ -1,15 +1,17 @@
 from fastapi import FastAPI
-from .ai_model import pipe
+#from .ai_model import pipe
 from .classes import ChatRequest, ChatResponse
+from .db import GetUserDb
 
 app = FastAPI()
-
 model_path = "./model"
 
-@app.get("/")
+test = GetUserDb("this is not a viable thing/")
+
+@app.post("/")
 def index(request: ChatRequest) -> ChatResponse:
     response: ChatResponse = ChatResponse(
-            content = str(pipe(request.content))
+            content=request.content
             )
     print(response)
     return response
