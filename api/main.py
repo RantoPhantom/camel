@@ -1,17 +1,26 @@
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 #from .ai_model import pipe
-from .classes import ChatRequest, ChatResponse
+from .classes import GenerateMessageRequest, GenerateMessageResponse, Message
 from .db import GetUserDb
 
 app = FastAPI()
 model_path = "./model"
 
-test = GetUserDb("this is not a viable thing/")
+test = GetUserDb("test_user")
 
-@app.post("/")
-def index(request: ChatRequest) -> ChatResponse:
-    response: ChatResponse = ChatResponse(
-            content=request.content
+@app.get("/")
+def index() -> RedirectResponse:
+    return RedirectResponse("/docs")
+
+@app.post("/generate-message")
+def chat(request: GenerateMessageRequest) -> GenerateMessageResponse:
+    response: GenerateMessageResponse = GenerateMessageResponse(
+            message=Message(
+                message_id="heehe",
+                message_content=request.content,
+                sender="bot",
+                date_added="no"
+                )
             )
-    print(response)
     return response

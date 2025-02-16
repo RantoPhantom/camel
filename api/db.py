@@ -5,8 +5,8 @@ DB_ROOT = "./dbs"
 _db_connections = {}
 
 class DbConnection():
-    def __init__(self, user_id, connection):
-        self.user_id = user_id
+    def __init__(self, username, connection):
+        self.username = username
         self.connection = connection
         self.cursor = self.connection.cursor()
         self.init_tables()
@@ -38,7 +38,7 @@ class DbConnection():
         CREATE TABLE IF NOT EXISTS messages (
                 message_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 chat_id INTEGER NOT NULL,
-                message text NOT NULL,
+                message_content text NOT NULL,
                 sender text NOT NULL,
                 date_added TEXT NOT NULL,
                 FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE
@@ -57,17 +57,17 @@ class DbConnection():
     def close(self):
         global _db_connections
 
-        del _db_connections[self.user_id]
+        del _db_connections[self.username]
         self.connection.close()
 
-def GetUserDb(user_id):
-    user_id = re.sub(r'[^a-zA-Z0-9_-]', '_', user_id)
+def GetUserDb(username):
+    username = re.sub(r'[^a-zA-Z0-9_-]', '_', username)
     global _db_connections
 
-    if user_id not in _db_connections:
-        _db_connections[user_id] = DbConnection(user_id, sqlite3.connect(f"{DB_ROOT}/{user_id}.sqlite"))
+    if username not in _db_connections:
+        _db_connections[username] = DbConnection(username, sqlite3.connect(f"{DB_ROOT}/{username}.sqlite"))
 
-    return _db_connections[user_id]
+    return _db_connections[username]
 
 
 # mental illness
