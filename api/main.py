@@ -1,26 +1,28 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 #from .ai_model import pipe
-from .classes import GenerateMessageRequest, GenerateMessageResponse, Message
-from .db import GetUserDb
-
+from .routes.chats import router as chats_router
+from .routes.auth import router as auth_router
+import bcrypt
 app = FastAPI()
-model_path = "./model"
 
-test = GetUserDb("test_user")
+origins = [
+        'http://127.0.0.1:3000'
+        'http://localhost:3000'
+        ]
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins = origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        )
+
+app.include_router(chats_router, prefix="/chats")
+app.include_router(auth_router, prefix="/auth")
 
 @app.get("/")
-def index() -> RedirectResponse:
+async def index() -> RedirectResponse:
     return RedirectResponse("/docs")
 
-@app.post("/generate-message")
-def chat(request: GenerateMessageRequest) -> GenerateMessageResponse:
-    response: GenerateMessageResponse = GenerateMessageResponse(
-            message=Message(
-                message_id="heehe",
-                message_content=request.content,
-                sender="bot",
-                date_added="no"
-                )
-            )
-    return response

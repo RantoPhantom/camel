@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 class UserInfo(BaseModel):
     username: str
+    password_hash: str
     role: str
     icon_file: str
     date_added: str
@@ -17,31 +18,41 @@ class Chat(BaseModel):
     title: str
     date_added: str
 
-class GenerateMessageRequest(BaseModel):
+class GenerateMessageReq(BaseModel):
     username: str
     content: str
     chat: Chat
 
-class GenerateMessageResponse(BaseModel):
+class GenerateMessageRes(BaseModel):
     message: Message
 
-class GetAllChatRequest(BaseModel):
+class GetAllChatReq(BaseModel):
     username: str
 
-class GetAllChatResponse(BaseModel):
+class GetAllChatRes(BaseModel):
     chats: list[Chat]
 
-class GetChatRequest(BaseModel):
+class GetChatReq(BaseModel):
     username: str
     chat: Chat
 
-class GetChatResponse(BaseModel):
+class GetChatRes(BaseModel):
     messages: list[Message]
 
-class LoginRequest(BaseModel):
+class LoginReq(BaseModel):
     username: str
     password: str
 
-class LoginResponse(BaseModel):
+class LoginRes(BaseModel):
+    username: str
+    role: str
+
+class RegisterReq(BaseModel):
+    username: str
+    icon_file: str
+    role: str
+    password: str
+
+class RegisterRes(BaseModel):
     username: str
     role: str

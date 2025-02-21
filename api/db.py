@@ -1,13 +1,19 @@
 import sqlite3
 import re
+import datetime
+import os.path
+from .classes import UserInfo
+_db_connections = {}
 DB_ROOT = "./dbs"
 
-_db_connections = {}
+create_user_query: str = '''
+insert into user_info values (?,?,?,?,?)
+'''
 
 class DbConnection():
-    def __init__(self, username, connection):
+    def __init__(self, username: str):
         self.username = username
-        self.connection = connection
+        self.connection = sqlite3.connect(f"{DB_ROOT}/{username}.sqlite")
         self.cursor = self.connection.cursor()
         self.init_tables()
 
@@ -57,18 +63,58 @@ class DbConnection():
     def close(self):
         global _db_connections
 
-        del _db_connections[self.username]
+        if self.username in _db_connections:
+            del _db_connections[self.username]
         self.connection.close()
+        
+    def get_info(self) -> UserInfo:
+        user_info: UserInfo
+        query: str = '''
+        select * from user_info;
+        '''
+        res = self.cursor.execute(query).fetchone()
+        user_info = UserInfo(
+                username=res[0],
+                password_hash=res[1],
+                role=res[2],
+                icon_file=res[3],
+                date_added=res[4],
+                )
+        return user_info
 
-def GetUserDb(username):
-    username = re.sub(r'[^a-zA-Z0-9_-]', '_', username)
+
+def CheckBanned(username) -> bool:
+    return re.search(r'[^a-zA-Z0-9_-]', username) != None
+
+def GetUserDb(username) -> DbConnection | None:
     global _db_connections
 
-    if username not in _db_connections:
-        _db_connections[username] = DbConnection(username, sqlite3.connect(f"{DB_ROOT}/{username}.sqlite"))
+    if username in _db_connections:
+        return _db_connections[username]
 
+    if os.path.isfile(f"{DB_ROOT}/{username}.sqlite"):
+        return DbConnection(username)
+
+    return None
+
+def CreateUserDb(user_info: UserInfo) -> DbConnection:
+    username = user_info.username
+    password_hash = user_info.password_hash
+    role = user_info.role
+    icon_file = user_info.icon_file
+    date_added = datetime.datetime.now().isoformat()
+
+    global _db_connections, create_user_query
+    _db_connections[username] = DbConnection(username)
+    _db_connections[username].cursor.execute(create_user_query, (
+        username,
+        password_hash,
+        role,
+        icon_file,
+        date_added
+        ))
+    _db_connections[username].connection.commit()
     return _db_connections[username]
-
 
 # mental illness
 #class Db(object):
