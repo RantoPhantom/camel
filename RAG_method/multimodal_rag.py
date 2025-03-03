@@ -4,7 +4,7 @@ import json
 import pickle
 from pathlib import Path
 from datetime import datetime
-from typing import Any, List, Dict, Set
+from typing import Any, Dict
 from pydantic import BaseModel
 from unstructured.partition.pdf import partition_pdf
 
