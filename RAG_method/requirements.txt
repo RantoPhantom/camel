@@ -1,0 +1,13 @@
+langchain
+langchain_community
+langchain_ollama
+ollama
+requests
+unstructured[all-docs]
+pydantic
+lxml
+pathlib
+gradio
+langchain-chroma
+tiktoken
+sentence-transformers
