@@ -1,1 +1,1 @@
-# An AI chatbot made for assignment 1
+# An AI chatbot made for ze assignment lmeo
