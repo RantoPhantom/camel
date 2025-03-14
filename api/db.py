@@ -3,8 +3,9 @@ import re
 import datetime
 import os.path
 from .classes import UserInfo
+from .error import UserNotInDbError
 _db_connections = {}
-DB_ROOT = "./dbs"
+DB_ROOT = "./api/dbs"
 
 create_user_query: str = '''
 insert into user_info values (?,?,?,?,?)
@@ -86,7 +87,7 @@ class DbConnection():
 def CheckBanned(username) -> bool:
     return re.search(r'[^a-zA-Z0-9_-]', username) != None
 
-def GetUserDb(username) -> DbConnection | None:
+def GetUserDb(username) -> DbConnection:
     global _db_connections
 
     if username in _db_connections:
@@ -95,7 +96,7 @@ def GetUserDb(username) -> DbConnection | None:
     if os.path.isfile(f"{DB_ROOT}/{username}.sqlite"):
         return DbConnection(username)
 
-    return None
+    raise UserNotInDbError
 
 def CreateUserDb(user_info: UserInfo) -> DbConnection:
     username = user_info.username

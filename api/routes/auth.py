@@ -1,11 +1,30 @@
 from fastapi import APIRouter, HTTPException
-from ..classes import LoginReq, LoginRes, RegisterReq, RegisterRes, UserInfo
 from ..db import GetUserDb, CreateUserDb, CheckBanned
+from ..classes import UserInfo
+from pydantic import BaseModel
 import bcrypt
 import datetime
 import time
 
 router = APIRouter()
+
+class LoginReq(BaseModel):
+    username: str
+    password: str
+
+class LoginRes(BaseModel):
+    username: str
+    role: str
+
+class RegisterReq(BaseModel):
+    username: str
+    icon_file: str
+    role: str
+    password: str
+
+class RegisterRes(BaseModel):
+    username: str
+    role: str
 
 @router.post("/login")
 async def login(request: LoginReq) -> LoginRes:
@@ -37,10 +56,8 @@ async def login(request: LoginReq) -> LoginRes:
     else:
         raise HTTPException(status_code=404, detail="username or password is wrong")
 
-    raise HTTPException(status_code=500, detail="something went wrong with the backend")
-
-@router.post("/register")
-async def register(request: RegisterReq) -> RegisterRes:
+@router.put("/signup")
+async def signup(request: RegisterReq) -> RegisterRes:
     response: RegisterRes
     username = request.username
 

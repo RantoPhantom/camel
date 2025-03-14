@@ -14,45 +14,6 @@ class Message(BaseModel):
     date_added: str
 
 class Chat(BaseModel):
-    chat_id: str
+    chat_id: int
     title: str
     date_added: str
-
-class GenerateMessageReq(BaseModel):
-    username: str
-    content: str
-    chat: Chat
-
-class GenerateMessageRes(BaseModel):
-    message: Message
-
-class GetAllChatReq(BaseModel):
-    username: str
-
-class GetAllChatRes(BaseModel):
-    chats: list[Chat]
-
-class GetChatReq(BaseModel):
-    username: str
-    chat: Chat
-
-class GetChatRes(BaseModel):
-    messages: list[Message]
-
-class LoginReq(BaseModel):
-    username: str
-    password: str
-
-class LoginRes(BaseModel):
-    username: str
-    role: str
-
-class RegisterReq(BaseModel):
-    username: str
-    icon_file: str
-    role: str
-    password: str
-
-class RegisterRes(BaseModel):
-    username: str
-    role: str
