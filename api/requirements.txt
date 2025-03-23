@@ -1,6 +1,2 @@
-transformers
 fastapi[standard]
-torch
-protobuf
-sentencepiece
 bcrypt

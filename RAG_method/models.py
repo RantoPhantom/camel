@@ -2,7 +2,6 @@ import os
 import base64
 import requests
 from langchain_community.llms import Ollama
-import subprocess
 from langchain_community.chat_models import ChatOllama
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate

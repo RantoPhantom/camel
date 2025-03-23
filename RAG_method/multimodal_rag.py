@@ -41,6 +41,7 @@ class DiabetesKnowledgeBase:
         # Create a path for the persisted vector store
         self.vectorstore_path = os.path.join(self.processed_dir, "chroma_db")
         self.docstore_path = os.path.join(self.processed_dir, "docstore.pkl")
+
         # Initialize components
         self.embeddings = init_embeddings()
         self.chat_model = init_chat_model()
@@ -160,7 +161,7 @@ class DiabetesKnowledgeBase:
         text_elements = [e for e in categorized_elements if e.type == "text" and e.text != ""]
         texts = [i.text for i in text_elements]
         print(f"Summarizing {len(texts)} text chunks...")
-        text_summaries = self.summary_chain.batch(texts, {"max_concurrent": 5})
+        text_summaries = self.summary_chain.batch(texts, {"max_concurrent": 1})
 
         # Save the interim results to prevent data loss in case of interruption
         interim_results_dir = os.path.join(self.processed_dir, f"{filename}_interim")
