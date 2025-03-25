@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
-#from .ai_model import pipe
 from .routes.chats import router as chats_router
 from .routes.auth import router as auth_router
-import bcrypt
 app = FastAPI()
 
 origins = [
@@ -26,3 +24,6 @@ app.include_router(auth_router, prefix="/auth")
 async def index() -> RedirectResponse:
     return RedirectResponse("/docs")
 
+@app.get("/healthcheck", status_code=200)
+async def healthcheck() -> None:
+    return
