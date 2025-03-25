@@ -1,29 +1,49 @@
 services:
-  ai_server: 
-    build: ./ai_server
-    env_file: "./ai_server/.env"
-    ports:
-      - 4242:4242
-    healthcheck:
-      interval: 2s
-      timeout: 10s
-      retries: 10
-    volumes:
-      - ./ai_server/models:/ai_server/models
-    group_add:
-      - video
-      - render
-    devices:
-      - /dev/kfd
-      - /dev/dri
-    security_opt:
-      - seccomp=unconfined
+  frontend:
+    build: ./frontend
+    ports: 
+      - 3000:3000
+    depends_on:
+      api:
+        condition: service_healthy
+        restart: false
     develop:
       watch:
         - action: sync+restart
-          path: ./ai_server
-          target: /ai_server
+          path: ./frontend
+          target: /frontend
+          ignore: 
+          - node_modules/
         - action: rebuild
-          path: ./ai_server/requirements.txt
+          path: ./frontend/Dockerfile
+        - action: rebuild
+          path: ./frontend/package.json
+        - action: rebuild
+          path: ./docker-compose.yml
+  api:
+    build:
+      context: ./api/
+    environment:
+      - DEV=true
+    ports:
+      - 8000:8000
+    volumes:
+      - ./api/dbs:/api/dbs:z
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/healthcheck"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./api
+          target: /api
+          ignore: 
+          - __pycache__/
+        - action: rebuild
+          path: ./api/Dockerfile
+        - action: rebuild
+          path: ./api/requirments.txt
         - action: rebuild
           path: ./docker-compose.yml

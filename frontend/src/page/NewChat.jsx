@@ -1,6 +1,5 @@
 import ChatInputBox from "../component/ChatInputBox";
 
-
 export default function NewChat() {
 
     return (

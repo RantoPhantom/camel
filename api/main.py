@@ -3,12 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from .routes.chats import router as chats_router
 from .routes.auth import router as auth_router
+import logging
 app = FastAPI()
 
 origins = [
-        'http://127.0.0.1:3000'
-        'http://localhost:3000'
+        "*"
         ]
+
 app.add_middleware(
         CORSMiddleware,
         allow_origins = origins,
@@ -27,3 +28,9 @@ async def index() -> RedirectResponse:
 @app.get("/healthcheck", status_code=200)
 async def healthcheck() -> None:
     return
+
+class EndpointFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        return record.getMessage().find("/healthcheck") == -1
+
+logging.getLogger("uvicorn.access").addFilter(EndpointFilter())

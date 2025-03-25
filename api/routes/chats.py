@@ -1,3 +1,4 @@
+import lorem
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from ..classes import Chat, Message
@@ -60,7 +61,8 @@ async def get_all_chat(username: str) -> list[Chat]:
     return chats
 
 @router.put("/new-chat", status_code=200)
-async def insert_chat(request: NewChatReq) -> None:
+async def insert_chat(request: NewChatReq) -> set[Message]:
+    response : set[Message] = set()
     username: str = request.username
     message: str = request.message
     chat_title: str = message[0:20]
@@ -78,17 +80,47 @@ async def insert_chat(request: NewChatReq) -> None:
     query: str = '''
     insert into messages(chat_id, message_content, sender, date_added)
     values (?,?,?,?);
+    returning message_id, message_content,sender,date_added
     '''
-    user_db.cursor.execute(query, (
-        chat_id, 
-        message,
-        "user",
-        datetime.datetime.now().isoformat()
-        )
-                           )
-
+    res = user_db.cursor.execute(
+            query, (
+                chat_id, 
+                message,
+                "user",
+                datetime.datetime.now().isoformat()
+                )
+            ).fetchone()
     user_db.connection.commit()
-    return
+
+    response.add(Message(
+        message_id=res[0],
+        message_content=res[1],
+        sender=res[2],
+        date_added=res[3],
+        ))
+
+    query: str = '''
+    insert into messages(chat_id, message_content, sender, date_added)
+    values (?,?,?,?);
+    returning message_id, message_content,sender,date_added
+    '''
+    res = user_db.cursor.execute(
+            query, (
+                chat_id, 
+                lorem.get_paragraph(count=1, comma=(0, 2), word_range=(4, 8), sentence_range=(5, 10))[0],
+                "user",
+                datetime.datetime.now().isoformat()
+                )
+            ).fetchone()
+    user_db.connection.commit()
+
+    response.add(Message(
+        message_id=res[0],
+        message_content=res[1],
+        sender=res[2],
+        date_added=res[3],
+        ))
+    return response
 
 @router.put("/new-message", status_code=200)
 async def new_message(request: NewMessageReq) -> None:

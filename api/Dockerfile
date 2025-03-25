@@ -2,11 +2,11 @@ FROM python:3.10.16-alpine AS base
 
 WORKDIR /api
 
-COPY ./ /api
-RUN apk add curl
+COPY ./requirements.txt ./
+RUN apk add --no-cache curl &&\
+	pip install --no-cache-dir setuptools>=65.5.1 &&\
+	pip install --no-cache-dir -r requirements.txt 
 
-RUN pip install setuptools>=65.5.1
+COPY ./ ./
 
-RUN pip install --no-cache-dir -r requirements.txt 
-
-CMD [ "python3", "-m", "fastapi", "dev", "main.py"]
+CMD [ "python3", "-m", "fastapi", "run", "main.py"]
