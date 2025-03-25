@@ -1,4 +1,5 @@
 import lorem
+from ..error import UserNotInDbError
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
 from ..classes import Chat, Message
@@ -45,6 +46,8 @@ class GetChatRes(BaseModel):
 @router.get("/get-history")
 async def get_all_chat(username: str) -> list[Chat]:
     user_db = GetUserDb(username)
+    if user_db == None:
+        raise UserNotInDbError
 
     chats: list[Chat] = []
 
@@ -71,6 +74,8 @@ async def insert_chat(request: NewChatReq) -> list[Message]:
     chat_title: str = message[0:20]
 
     user_db = GetUserDb(username)
+    if user_db == None:
+        raise UserNotInDbError
 
     query: str = '''
     insert into chats(title, date_added)
@@ -135,6 +140,8 @@ async def new_message(request: NewMessageReq) -> None:
     chat_id = request.chat_id
     message_content = request.message_content
     user_db = GetUserDb(username)
+    if user_db == None:
+        raise UserNotInDbError
 
     query: str = '''
     select * from chats where
@@ -160,6 +167,8 @@ async def new_message(request: NewMessageReq) -> None:
 @router.get("/get-chat-detail")
 async def get_message_from_chat(username: str, chat_id: int) -> list[Message]:
     user_db = GetUserDb(username)
+    if user_db == None:
+        raise UserNotInDbError
 
     query: str = '''
     select * from messages 
@@ -174,6 +183,8 @@ async def get_message_from_chat(username: str, chat_id: int) -> list[Message]:
 @router.delete("/remove-chat")
 async def remove_chat(username: str ,chat_id: int) -> None:
     user_db = GetUserDb(username)
+    if user_db == None:
+        raise UserNotInDbError
 
     query: str = '''
     delete from chats 
@@ -190,6 +201,8 @@ async def remove_chat(username: str ,chat_id: int) -> None:
 @router.get("/search")
 async def search_chat(username: str, search_string: str) -> list[Chat]:
     user_db = GetUserDb(username)
+    if user_db == None:
+        raise UserNotInDbError
     response: list[Chat] = []
 
     query: str = '''

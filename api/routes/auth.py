@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from ..error import UserNotInDbError
 from ..db import GetUserDb, CreateUserDb, CheckBanned
 from ..classes import UserInfo
 from pydantic import BaseModel
@@ -69,7 +70,6 @@ async def signup(request: RegisterReq) -> RegisterRes:
     icon_file = request.icon_file
 
     user_db = GetUserDb(username)
-
     if user_db != None:
         raise HTTPException(status_code=409, detail="this user is already registered")
 

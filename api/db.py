@@ -87,7 +87,7 @@ class DbConnection():
 def CheckBanned(username) -> bool:
     return re.search(r'[^a-zA-Z0-9_-]', username) != None
 
-def GetUserDb(username) -> DbConnection:
+def GetUserDb(username) -> DbConnection | None:
     global _db_connections
 
     if username in _db_connections:
@@ -96,7 +96,7 @@ def GetUserDb(username) -> DbConnection:
     if os.path.isfile(f"{DB_ROOT}/{username}.sqlite"):
         return DbConnection(username)
 
-    raise UserNotInDbError
+    return None
 
 def CreateUserDb(user_info: UserInfo) -> DbConnection:
     username = user_info.username
