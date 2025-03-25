@@ -1,13 +1,34 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import RootLayout from './layout/RootLayout';
 import reportWebVitals from './reportWebVitals';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Navigate,
+  Route,
+  RouterProvider
+} from 'react-router-dom'
+import NewChat from './page/NewChat';
+import ChatDetail from './page/ChatDetail';
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<RootLayout />}>
+      <Route index element={<Navigate to={"./newchat"} />} />
+      <Route path="newchat" element={<NewChat />} />
+      <Route path="chatdetail" element={<ChatDetail />} />
+    </Route>
+  )
+)
+
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
