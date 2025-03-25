@@ -5,7 +5,7 @@ import os.path
 from .classes import UserInfo
 from .error import UserNotInDbError
 _db_connections = {}
-DB_ROOT = "./api/dbs"
+DB_ROOT = "./dbs"
 
 create_user_query: str = '''
 insert into user_info values (?,?,?,?,?)

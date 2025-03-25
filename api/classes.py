@@ -8,7 +8,7 @@ class UserInfo(BaseModel):
     date_added: str
 
 class Message(BaseModel):
-    message_id: str
+    message_id: int
     message_content: str
     sender: str
     date_added: str

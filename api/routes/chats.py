@@ -4,7 +4,10 @@ from fastapi.exceptions import HTTPException
 from ..classes import Chat, Message
 from ..db import GetUserDb
 from pydantic import BaseModel
+import os
 import datetime
+
+dev = os.getenv("DEV")
 
 router = APIRouter()
 
@@ -61,8 +64,8 @@ async def get_all_chat(username: str) -> list[Chat]:
     return chats
 
 @router.put("/new-chat", status_code=200)
-async def insert_chat(request: NewChatReq) -> set[Message]:
-    response : set[Message] = set()
+async def insert_chat(request: NewChatReq) -> list[Message]:
+    response : list[Message] = []
     username: str = request.username
     message: str = request.message
     chat_title: str = message[0:20]
@@ -79,8 +82,8 @@ async def insert_chat(request: NewChatReq) -> set[Message]:
 
     query: str = '''
     insert into messages(chat_id, message_content, sender, date_added)
-    values (?,?,?,?);
-    returning message_id, message_content,sender,date_added
+    values (?,?,?,?)
+    returning message_id, message_content, sender, date_added;
     '''
     res = user_db.cursor.execute(
             query, (
@@ -92,7 +95,11 @@ async def insert_chat(request: NewChatReq) -> set[Message]:
             ).fetchone()
     user_db.connection.commit()
 
-    response.add(Message(
+    global dev
+    if dev != "true":
+        return response
+
+    response.append(Message(
         message_id=res[0],
         message_content=res[1],
         sender=res[2],
@@ -101,20 +108,20 @@ async def insert_chat(request: NewChatReq) -> set[Message]:
 
     query: str = '''
     insert into messages(chat_id, message_content, sender, date_added)
-    values (?,?,?,?);
-    returning message_id, message_content,sender,date_added
+    values (?,?,?,?)
+    returning message_id, message_content, sender, date_added;
     '''
     res = user_db.cursor.execute(
             query, (
                 chat_id, 
-                lorem.get_paragraph(count=1, comma=(0, 2), word_range=(4, 8), sentence_range=(5, 10))[0],
+                lorem.paragraph(),
                 "user",
                 datetime.datetime.now().isoformat()
                 )
             ).fetchone()
     user_db.connection.commit()
 
-    response.add(Message(
+    response.append(Message(
         message_id=res[0],
         message_content=res[1],
         sender=res[2],
