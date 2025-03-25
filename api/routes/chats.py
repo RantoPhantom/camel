@@ -67,7 +67,7 @@ async def get_all_chat(username: str) -> list[Chat]:
     return chats
 
 @router.put("/new-chat", status_code=200)
-async def insert_chat(request: NewChatReq) -> list[Message]:
+async def insert_chat(request: NewChatReq) -> int:
     response : list[Message] = []
     username: str = request.username
     message: str = request.message
@@ -84,58 +84,12 @@ async def insert_chat(request: NewChatReq) -> list[Message]:
     '''
 
     chat_id = user_db.cursor.execute(query, (chat_title, datetime.datetime.now().isoformat())).fetchone()[0]
+    return chat_id
 
-    query: str = '''
-    insert into messages(chat_id, message_content, sender, date_added)
-    values (?,?,?,?)
-    returning message_id, message_content, sender, date_added;
-    '''
-    res = user_db.cursor.execute(
-            query, (
-                chat_id, 
-                message,
-                "user",
-                datetime.datetime.now().isoformat()
-                )
-            ).fetchone()
-    user_db.connection.commit()
-
-    global dev
-    if dev != "true":
-        return response
-
-    response.append(Message(
-        message_id=res[0],
-        message_content=res[1],
-        sender=res[2],
-        date_added=res[3],
-        ))
-
-    query: str = '''
-    insert into messages(chat_id, message_content, sender, date_added)
-    values (?,?,?,?)
-    returning message_id, message_content, sender, date_added;
-    '''
-    res = user_db.cursor.execute(
-            query, (
-                chat_id, 
-                lorem.paragraph(),
-                "user",
-                datetime.datetime.now().isoformat()
-                )
-            ).fetchone()
-    user_db.connection.commit()
-
-    response.append(Message(
-        message_id=res[0],
-        message_content=res[1],
-        sender=res[2],
-        date_added=res[3],
-        ))
-    return response
 
 @router.put("/new-message", status_code=200)
-async def new_message(request: NewMessageReq) -> None:
+async def new_message(request: NewMessageReq) -> list[Message]:
+    response: list[Message] = []
     username = request.username
     chat_id = request.chat_id
     message_content = request.message_content
@@ -153,16 +107,50 @@ async def new_message(request: NewMessageReq) -> None:
 
     query = '''
     insert into messages(chat_id,message_content,sender,date_added)
-    values(?,?,?,?);
+    values(?,?,?,?)
+    returning message_id, message_content, sender, date_added;
     '''
-    user_db.cursor.execute(query,(
+    res = user_db.cursor.execute(query,(
         chat_id,
         message_content,
         "user",
         datetime.datetime.now().isoformat()
-        ))
+        )).fetchone()
     user_db.connection.commit()
-    return
+
+    response.append(Message(
+        message_id=res[0],
+        message_content=res[0],
+        sender=res[0],
+        date_added=res[0],
+        ))
+
+    global dev
+    if dev != "true":
+        return response
+
+    query: str = '''
+    insert into messages(chat_id, message_content, sender, date_added)
+    values (?,?,?,?)
+    returning message_id, message_content, sender, date_added;
+    '''
+    res = user_db.cursor.execute(
+            query, (
+                chat_id, 
+                lorem.paragraph(),
+                "ai",
+                datetime.datetime.now().isoformat()
+                )
+            ).fetchone()
+    user_db.connection.commit()
+
+    response.append(Message(
+        message_id=res[0],
+        message_content=res[1],
+        sender=res[2],
+        date_added=res[3],
+        ))
+    return response
 
 @router.get("/get-chat-detail")
 async def get_message_from_chat(username: str, chat_id: int) -> list[Message]:
