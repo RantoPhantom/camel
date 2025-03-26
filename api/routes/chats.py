@@ -8,6 +8,8 @@ from pydantic import BaseModel
 import os
 import datetime
 
+AI_URL = "http://ai_server:4242"
+
 dev = os.getenv("DEV")
 
 router = APIRouter()
@@ -46,7 +48,7 @@ class GetChatRes(BaseModel):
 @router.get("/get-history")
 async def get_all_chat(username: str) -> list[Chat]:
     user_db = GetUserDb(username)
-    if user_db == None:
+    if user_db is None:
         raise UserNotInDbError
 
     chats: list[Chat] = []
@@ -68,7 +70,6 @@ async def get_all_chat(username: str) -> list[Chat]:
 
 @router.put("/new-chat", status_code=200)
 async def insert_chat(request: NewChatReq) -> int:
-    response : list[Message] = []
     username: str = request.username
     message: str = request.message
     chat_title: str = message[0:20]
@@ -85,7 +86,6 @@ async def insert_chat(request: NewChatReq) -> int:
 
     chat_id = user_db.cursor.execute(query, (chat_title, datetime.datetime.now().isoformat())).fetchone()[0]
     return chat_id
-
 
 @router.put("/new-message", status_code=200)
 async def new_message(request: NewMessageReq) -> list[Message]:

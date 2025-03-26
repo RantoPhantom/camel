@@ -28,8 +28,8 @@ RUN apt-get update &&\
 RUN pip install --no-cache-dir wheel setuptools
 RUN pip3 install --no-cache-dir --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.1/
 
-RUN wget -O key.apt https://notesalexp.org/debian/alexp_key.asc && apt-key add key.apt
-RUN apt update && apt install tesseract-ocr -y
+#RUN wget -O key.apt https://notesalexp.org/debian/alexp_key.asc && apt-key add key.apt
+#RUN apt update && apt install tesseract-ocr -y
 
 RUN wget -qO - https://repo.radeon.com/rocm/rocm.gpg.key | tee /usr/share/keyrings/rocm.gpg.key && \
     echo "deb [signed-by=/usr/share/keyrings/rocm.gpg.key] http://repo.radeon.com/rocm/apt/5.7.1 ubuntu main" | tee /etc/apt/sources.list.d/rocm.list

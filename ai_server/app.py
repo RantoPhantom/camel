@@ -1,15 +1,15 @@
-import torch
-print("Torch version:", torch.__version__)
-print("Is ROCm available?:", torch.version.hip)
-print("CUDA available?:", torch.cuda.is_available())
-print("MPS available (for macOS)?:", torch.backends.mps.is_available())
-print("Torch device:", torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"))
-
 from multimodal_rag import DiabetesKnowledgeBase
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import uvicorn
+import torch
+
+print("Torch version:", torch.__version__)
+print("Is ROCm available?:", torch.version.hip)
+print("CUDA available?:", torch.cuda.is_available())
+print("MPS available (for macOS)?:", torch.backends.mps.is_available())
+print("Torch device:", torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"))
 
 class AnswerReq(BaseModel):
     message: str
@@ -22,7 +22,7 @@ app = FastAPI()
 
 kb = DiabetesKnowledgeBase()
 
-#kb.process_all_pdfs()
+kb.process_all_pdfs()
 #print(kb.get_processed_files_status())
 
 @app.post("/answer")

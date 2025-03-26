@@ -9,7 +9,8 @@ services:
       timeout: 10s
       retries: 10
     volumes:
-      - ./ai_server/models:/ai_server/models
+      - ./ai_server/models:/ai_server/models:z
+      - ./ai_server/data:/ai_server/data:z
     group_add:
       - video
       - render

@@ -2,12 +2,12 @@ import os
 import uuid
 import json
 import pickle
+import pymupdf
 from pathlib import Path
 from datetime import datetime
 from typing import Any, Dict
 from pydantic import BaseModel
-from unstructured.partition.pdf import partition_pdf
-
+from pdf_extraction import extract_text
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage import InMemoryStore
 from langchain_chroma import Chroma
@@ -16,7 +16,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
-from models import init_embeddings, init_chat_model, get_text_summary_chain, process_image_with_llava
+from models import init_embeddings, init_chat_model, get_text_summary_chain
 
 class Element(BaseModel):
     type: str
@@ -26,8 +26,8 @@ class DiabetesKnowledgeBase:
     def __init__(self):
     
         # Initialize the knowledge base with the path to PDF files
-        self.data_dir = "./data/"
-        self.image_dir = "./figures/"
+        self.data_dir = "./data/raw-pdfs/"
+        self.image_dir = "./data/extracted_images/"
         Path(self.image_dir).mkdir(parents=True, exist_ok=True)
 
         # Create a directory to store processed data
@@ -92,10 +92,9 @@ class DiabetesKnowledgeBase:
         """ 
         self.prompt = ChatPromptTemplate.from_template(template)
         
-        self.chain = (
+        self.init_chain = (
             {"context": self.retriever, "question": RunnablePassthrough()} | self.prompt | self.chat_model | StrOutputParser()
         )
-    
 
     # Load the log of processed files
     def _load_processed_files(self) -> Dict[str, str]:
@@ -123,8 +122,7 @@ class DiabetesKnowledgeBase:
         except Exception as e:
             print(f"Persisted docstore. Unable to count documents: {str(e)}")
 
-
-    # Process a PDF file, extract text, tables, and images  
+    # Process a PDF file, extract text
     def process_pdf(self, pdf_path: str) -> None:
 
         # Check if the file has already been processed and hasn't changed
@@ -136,32 +134,12 @@ class DiabetesKnowledgeBase:
             return 
 
         print(f"Processing {pdf_path}...")
+        doc = pymupdf.open(self.data_dir + filename)
+        text_chunks = extract_text(doc, max_length=2000)
         
-        # Get elements from the PDF
-        raw_pdf_elements = partition_pdf(
-            filename=pdf_path,
-            strategy="fast",
-            extract_images_in_pdf=True,
-            chunking_strategy="by_title",
-            max_characters=3500,
-            new_after_n_chars=2200,
-            combine_text_under_n_chars=1500,
-            image_output_dir_path=self.image_dir,
-        )
-        
-        # Categorize elements
-        categorized_elements = []
-        for element in raw_pdf_elements:
-            if "unstructured.documents.elements.Table" in str(type(element)):
-                categorized_elements.append(Element(type="table", text=str(element)))
-            elif "unstructured.documents.elements.CompositeElement" in str(type(element)):
-                categorized_elements.append(Element(type="text", text=str(element)))
-                
         # Process text elements
-        text_elements = [e for e in categorized_elements if e.type == "text" and e.text != ""]
-        texts = [i.text for i in text_elements]
-        print(f"Summarizing {len(texts)} text chunks...")
-        text_summaries = self.summary_chain.batch(texts, {"max_concurrent": 12})
+        print(f"Summarizing {len(text_chunks)} text chunks...")
+        text_summaries = self.summary_chain.batch(text_chunks, {"max_concurrent": 12})
 
         # Save the interim results to prevent data loss in case of interruption
         interim_results_dir = os.path.join(self.processed_dir, f"{filename}_interim")
@@ -170,60 +148,17 @@ class DiabetesKnowledgeBase:
         with open(os.path.join(interim_results_dir, "text_summaries.pkl"), 'wb') as f:
             pickle.dump(text_summaries, f)
         
-        # Process table elements
-        table_elements = [e for e in categorized_elements if e.type == "table"]
-        tables = [i.text for i in table_elements]
-        print(f"Summarizing {len(tables)} tables...")
-        table_summaries = self.summary_chain.batch(tables, {"max_concurrent": 12})
-
-        with open(os.path.join(interim_results_dir, "table_summaries.pkl"), 'wb') as f:
-            pickle.dump(table_summaries, f)
-        
-        # Process image elements
-        print("Processing extracted images ...")
-        image_files = [f for f in os.listdir(self.image_dir) 
-                       if f.lower().endswith((".png", ".jpg", ".jpeg")) and
-                       os.path.getmtime(os.path.join(self.image_dir, f)) > os.path.getmtime(pdf_path) - 300] # Images extracted in the last 5 minutes
-        
-        # Print debugging information
-        print(f"Found {len(image_files)} images to process")
-
-        image_descriptions = {}
-        for i, img_file in enumerate(image_files):
-            img_path = os.path.join(self.image_dir, img_file)
-            print(f"Processing image {i+1}/{len(image_files)}: {img_file}")
-            description = process_image_with_llava(img_path)
-
-            # Print the description to help debug
-            print(f"Image description: {description[:100]}..." if len(description) > 100 else description)
-    
-
-            image_descriptions[img_file] = description
-
-            # Save descriptions incrementally
-            with open(os.path.join(interim_results_dir, "image_descriptions.json"), 'w') as f:
-                json.dump(image_descriptions, f)
-            
         # Add to retriever (only if there are items to add)
-        if texts and text_summaries:
-            self._add_to_retriever(texts, text_summaries, "text", filename)
-            
-        if tables and table_summaries:
-            self._add_to_retriever(tables, table_summaries, "table", filename)
-            
-        if image_descriptions:
-            self._add_to_retriever(list(image_descriptions.values()), list(image_descriptions.values()), "image", filename)
-                
+        if text_chunks and text_summaries:
+            self._add_to_retriever(text_chunks, text_summaries, "text", filename)
+
         # Mark as processed
         self.processed_files[filename] = file_mtime
         self._save_processed_files()
         
         # Persist the vectorstore
-        #self.vectorstore.persist()
         self._persist_docstore()
 
-        print(f"Finished processing {filename}. Added {len(texts)} text chunks, {len(tables)} tables, and {len(image_descriptions)} images to knowledge base.")
-        
         # Clean up interim files
         if os.path.exists(interim_results_dir):
             import shutil
@@ -253,7 +188,6 @@ class DiabetesKnowledgeBase:
         self.store.mset(list(zip(doc_ids, contents)))
         print(f"Added {len(summary_docs)} {content_type} documents from {source_file}")
         
-        
     # Process all PDFs in the data directory
     def process_all_pdfs(self):
         pdf_files = [f for f in os.listdir(self.data_dir) if f.lower().endswith('.pdf')]
@@ -261,26 +195,12 @@ class DiabetesKnowledgeBase:
             pdf_path = os.path.join(self.data_dir, pdf_file)
             self.process_pdf(pdf_path)
             
-            
-    # Answer a  question using the RAG pipeline
+    # Answer a question using the RAG pipeline
     def answer_question(self, question: str) -> str:
-        response = self.chain.invoke(question)
+        response = self.init_chain.invoke(question)
             # Extract the answer part
         answer_start = response.find("<|assistant|>")
         if answer_start != -1:
             return response[answer_start + len("<|assistant|>"):].strip()
         
         return response.strip()  # If "Answer:" isn't found, return full response
-    
-    # Get a report of processed files
-    def get_processed_files_status(self) -> str:
-        if not self.processed_files:
-            return "No files have been processed yet."
-        
-        report = "Processed files:\n"
-        for filename, timestamp in self.processed_files.items():
-            dt = datetime.fromtimestamp(float(timestamp))
-            report += f"- {filename} (processed on {dt.strftime('%Y-%m-%d %H:%M:%S')})\n"
-        
-        return report
-    

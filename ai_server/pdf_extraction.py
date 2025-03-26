@@ -1,11 +1,32 @@
 import os
 import pymupdf
+import re
 
-def extract_pdf_image(doc: pymupdf.Document) -> Exception | None:
-    dimlimit = 100  # 100  # each image side must be greater than this
-    relsize = 0  # 0.05  # image : image size ratio must be larger than this (5%)
-    abssize = 2048  # 2048  # absolute image size limit 2 KB: ignore if smaller
-    imgdir = "output"  # found images are stored in this subfolder
+dimlimit = 100  # 100  # each image side must be greater than this
+relsize = 0  # 0.05  # image : image size ratio must be larger than this (5%)
+abssize = 2048  # 2048  # absolute image size limit 2 KB: ignore if smaller
+imgdir = "./data/extracted_images/"  # found images are stored in this subfolder
+
+def extract_text(doc: pymupdf.Document, max_length=300) -> list[str]:
+    chunks = []
+    all_text = chr(12).join([page.get_text() for page in doc])
+    sentences = re.split(r'\n', all_text)  # Split on empty lines (paragraphs)
+    current_chunk = ""
+
+    for sentence in sentences:
+        if len(current_chunk) + len(sentence) <= max_length:
+            current_chunk += sentence + "\n"
+        else:
+            chunks.append(current_chunk.strip())
+            current_chunk = sentence + "\n"
+
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+
+    return chunks
+
+def extract_images(doc: pymupdf.Document) -> Exception | None:
+    global dimlimit, relsize, abssize, imgdir
 
     if not os.path.exists(imgdir):  # make subfolder if necessary
         os.mkdir(imgdir)
@@ -56,7 +77,7 @@ def recoverpix(doc, item):
 
         try:
             pix = pymupdf.Pixmap(pix0, mask)
-        except:  # fallback to original base image in case of problems
+        except Exception as _:  # fallback to original base image in case of problems
             pix = pymupdf.Pixmap(doc.extract_image(xref)["image"])
 
         if pix0.n > 3:

@@ -16,3 +16,4 @@ pillow
 #torch
 transformers[torch]
 blobfile
+datasets
