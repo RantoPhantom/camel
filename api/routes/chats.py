@@ -85,6 +85,7 @@ async def insert_chat(request: NewChatReq) -> int:
     '''
 
     chat_id = user_db.cursor.execute(query, (chat_title, datetime.datetime.now().isoformat())).fetchone()[0]
+    user_db.connection.commit()
     return chat_id
 
 @router.put("/new-message", status_code=200)
