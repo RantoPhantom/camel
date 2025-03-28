@@ -14,11 +14,10 @@ export function useChatContext() {
 
 function chatReducer(state, action) {
     if (action.type === 'UPDATE_MSGLIST') {
-        let newState = state;
-        let updMsgs = action.payload
-        newState.msg_lists = updMsgs
-
-        return newState
+        return {
+            ...state,
+            msg_list: action.payload
+        }
     }
 
     if (action.type === 'ADD_MSG') {
@@ -26,7 +25,7 @@ function chatReducer(state, action) {
             ...state,
             msg_list: [
                 ...state.msg_list,
-                action.payload
+                ...action.payload
             ]
         }
     }
@@ -70,7 +69,7 @@ export default function ChatContextProvider({children}) {
         chatState: chatState,
         updateMsgList(newMsgList) {
             dispatch({
-                type: 'UPD_MSGLIST',
+                type: 'UPDATE_MSGLIST',
                 payload: newMsgList
             })
         },

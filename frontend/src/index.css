@@ -50,3 +50,7 @@ code {
   display: none
 }
 
+.chat-input {
+  width: calc(100vw - 35.3vw - 34px)
+}
+

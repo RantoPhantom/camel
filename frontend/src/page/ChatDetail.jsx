@@ -1,14 +1,19 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { useChatContext } from "../context/ChatContextProvider"
 import { getCookie } from "../js/Methods"
+import ChatInputBox from "../component/ChatInputBox"
+import UserMsg from "../component/UserMsg"
+import AiReply from "../component/AiReply"
 
-const API = "http://localhost:8000/"
+const API = "http://localhost:8000/chats"
 export default function ChatDetail() {
     const navigate = useNavigate()
     const { id } = useParams()
+    const [msgFetch, setMsgFetch] = useState(true)
     const {chatState, updateMsgList, addMsg, deleteMsg, deleteNewChatMsg} = useChatContext()
+
     
     useEffect(() => {
         if ( !id ) {
@@ -22,7 +27,7 @@ export default function ChatDetail() {
                 message_content: chatState.new_chat_msg.msg_content
             }
 
-            fetch(`${API}new-message`, {
+            fetch(`${API}/new-message`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -35,29 +40,47 @@ export default function ChatDetail() {
 
                 return Promise.reject()
             }).then(data => {
-                console.log(data)
                 deleteNewChatMsg()
+                addMsg(data)
+            }).catch(response => {
+                console.log(response)
+            })
+        } else {
+            fetch(`${API}/get-chat-detail?username=${getCookie("username")}&chat_id=${id}`).then(
+                response => {
+                    if (response.status === 200) {
+                        return response.json()
+                    }
+
+                    return Promise.reject(response)
+                }
+            ).then(data => {
+                data.sort((a, b) => ((a.date_added < b.date_added) ? -1 : ((a.date_added > b.date_added) ? 1 : 0)))
+                updateMsgList(data)
             }).catch(response => {
                 console.log(response)
             })
         }
-    })
+   
+    }, [])
+
     return(
-        <div className="py-[2vw] flex flex-col" >
-            <div className="flex flex-row-reverse my-[0.5vw]">
-                <p className="w-fit max-w-[35vw] p-[0.8vw] rounded-2xl bg-gray font-[500] text-[1.1vw] text-justify">Lorem ipsun dolor sit amet</p>
-            </div>
-
-            <div className="w-fit h-fit my-[2.5vw]">
-                <p className="w-fit h-fit font-[500] text-[1.1vw] text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet justo at elementum egestas. Sed ut finibus nulla. Nulla faucibus sem nibh, id sollicitudin erat condimentum commodo. Donec et nibh quis est consectetur imperdiet. Phasellus at augue vel mauris tempus suscipit. Quisque rhoncus laoreet convallis. Donec non sagittis ligula. Aliquam quis ultricies lacus. Nam id augue nec massa interdum fermentum. Etiam ac augue in odio imperdiet condimentum at non nulla. Nulla at nibh tincidunt, aliquam lorem a, mattis risus.
-
-Suspendisse vel tellus lorem. Nam erat orci, fermentum aliquet tristique sodales, condimentum quis enim. In vel nisi vel purus consequat varius. Sed ultrices bibendum suscipit. Phasellus blandit nisi ac blandit tincidunt. Praesent vitae erat ipsum. Praesent sed diam ut sapien molestie ornare. Nulla interdum ante sed laoreet efficitur. Phasellus eu bibendum metus. Nam interdum massa elit, vitae ullamcorper lorem scelerisque vel. Morbi tempus urna eu ante auctor egestas et id erat. Integer molestie non diam non tempus. Etiam risus risus, mattis in est in, tempor finibus dolor. Vivamus porta tortor pharetra metus faucibus, luctus egestas purus maximus. Sed ac lacus quis arcu rhoncus lobortis vel tristique massa. Nullam luctus eleifend neque.</p>
-            </div>
-
-            <div className="flex flex-row-reverse my-[0.5vw]">
-                <p className="w-fit max-w-[35vw] p-[0.8vw] rounded-2xl bg-gray font-[500] text-[1.1vw] text-justify">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent imperdiet justo at elementum egestas. Sed ut finibus nulla. Nulla faucibus sem nibh, id sollicitudin erat condimentum commodo. Donec et nibh quis est consectetur imperdiet. Phasellus at augue vel mauris tempus suscipit. Quisque rhoncus laoreet convallis. Donec non sagittis ligula. Aliquam quis ultricies lacus. Nam id augue nec massa interdum fermentum. Etiam ac augue in odio imperdiet condimentum at non nulla. Nulla at nibh tincidunt, aliquam lorem a, mattis risus.</p>
+        <div className="h-[100vh] flex flex-col">
+            <div className="px-[2vw] w-full h-[80%] max-h-[80%] overflow-y-scroll scrollbar">
+                {chatState.msg_list.map((msg, index) => {
+                    if (msg.sender === "user") {
+                        return <UserMsg key={index} message={msg.message_content} />
+                    } else if (msg.sender === "ai") {
+                        return <AiReply key={index} reply={msg.message_content} />
+                    } else {
+                        return <></>
+                    }
+                })}
             </div>
             
+            <div className="w-full h-fit">
+                <ChatInputBox chat_id={id}/>
+            </div>
         </div>
     )
 }

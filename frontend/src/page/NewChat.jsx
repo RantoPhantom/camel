@@ -1,8 +1,15 @@
+import { useEffect } from "react";
 import ChatInputBox from "../component/ChatInputBox";
 import { getCookie } from "../js/Methods"
+import { useChatContext } from "../context/ChatContextProvider";
 
 export default function NewChat() {
+    const {deleteNewChatMsg, updateMsgList} = useChatContext()
 
+    useEffect(() => {
+        deleteNewChatMsg()
+        updateMsgList([])
+    }, [])
 
     return (
         <div className="relative"> 
@@ -15,7 +22,7 @@ export default function NewChat() {
                 </p>
             </div>
             <div className="mt-[8vw]">
-                <ChatInputBox />
+                <ChatInputBox chat_id={0}/>
             </div>
         </div>
     )
