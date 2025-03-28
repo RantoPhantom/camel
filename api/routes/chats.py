@@ -156,6 +156,7 @@ async def new_message(request: NewMessageReq) -> list[Message]:
 @router.get("/get-chat-detail")
 async def get_message_from_chat(username: str, chat_id: int) -> list[Message]:
     user_db = GetUserDb(username)
+    response : list[Message] = []
     if user_db == None:
         raise UserNotInDbError
 
@@ -166,8 +167,18 @@ async def get_message_from_chat(username: str, chat_id: int) -> list[Message]:
     res = user_db.cursor.execute(query, [chat_id]).fetchall()
     if res == None:
         return []
-    
-    return res
+
+    for msg in res:
+        response.append(
+                Message(
+                    message_id=msg[0],
+                    message_content=msg[1],
+                    sender=msg[2],
+                    date_added=msg[3],
+                    )
+                )
+
+    return response
 
 @router.delete("/remove-chat")
 async def remove_chat(username: str ,chat_id: int) -> None:
