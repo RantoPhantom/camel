@@ -12,13 +12,20 @@ import {
 } from 'react-router-dom'
 import NewChat from './page/NewChat';
 import ChatDetail from './page/ChatDetail';
+import Login from './page/Login';
+import SignUp from './page/SignUp';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<RootLayout />}>
-      <Route index element={<Navigate to={"./newchat"} />} />
-      <Route path="newchat" element={<NewChat />} />
-      <Route path="chatdetail" element={<ChatDetail />} />
+    <Route path="/">
+      <Route index element={<Navigate to={"./chat"} />} />
+      <Route path="login" element={<Login />} />
+      <Route path="signup" element={<SignUp />} />
+      <Route path="chat" element={<RootLayout />}>
+        <Route index element={<Navigate to={"./newchat"} />} />
+        <Route path="newchat" element={<NewChat />} />
+        <Route path="chatdetail" element={<ChatDetail />} />
+      </Route>
     </Route>
   )
 )
