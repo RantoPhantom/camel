@@ -121,9 +121,9 @@ async def new_message(request: NewMessageReq) -> list[Message]:
 
     response.append(Message(
         message_id=res[0],
-        message_content=res[0],
-        sender=res[0],
-        date_added=res[0],
+        message_content=res[1],
+        sender=res[2],
+        date_added=res[3],
         ))
 
     global dev
