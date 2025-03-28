@@ -172,9 +172,9 @@ async def get_message_from_chat(username: str, chat_id: int) -> list[Message]:
         response.append(
                 Message(
                     message_id=msg[0],
-                    message_content=msg[1],
-                    sender=msg[2],
-                    date_added=msg[3],
+                    message_content=msg[2],
+                    sender=msg[3],
+                    date_added=msg[4],
                     )
                 )
 
