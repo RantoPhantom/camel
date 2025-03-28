@@ -24,7 +24,8 @@ const router = createBrowserRouter(
       <Route path="chat" element={<RootLayout />}>
         <Route index element={<Navigate to={"./newchat"} />} />
         <Route path="newchat" element={<NewChat />} />
-        <Route path="chatdetail" element={<ChatDetail />} />
+        <Route path="chatdetail/" element={<Navigate to={"../newchat"} />} />
+        <Route path="chatdetail/:id" element={<ChatDetail />} />
       </Route>
     </Route>
   )

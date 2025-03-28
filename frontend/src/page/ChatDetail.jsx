@@ -1,7 +1,47 @@
+import { useEffect } from "react"
+import { useParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
+import { useChatContext } from "../context/ChatContextProvider"
+import { getCookie } from "../js/Methods"
 
-
+const API = "http://localhost:8000/"
 export default function ChatDetail() {
+    const navigate = useNavigate()
+    const { id } = useParams()
+    const {chatState, updateMsgList, addMsg, deleteMsg, deleteNewChatMsg} = useChatContext()
+    
+    useEffect(() => {
+        if ( !id ) {
+            navigate("../newchat")
+        }
 
+        if (chatState.new_chat_msg.chat_id === Number(id) || chatState.new_chat_msg.msg_content !== "") {
+            const newMsg = {
+                username: getCookie("username"),
+                chat_id: Number(id),
+                message_content: chatState.new_chat_msg.msg_content
+            }
+
+            fetch(`${API}new-message`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newMsg)
+            }).then(response => {
+                if (response.status === 200) {
+                    return response.json()
+                }
+
+                return Promise.reject()
+            }).then(data => {
+                console.log(data)
+                deleteNewChatMsg()
+            }).catch(response => {
+                console.log(response)
+            })
+        }
+    })
     return(
         <div className="py-[2vw] flex flex-col" >
             <div className="flex flex-row-reverse my-[0.5vw]">

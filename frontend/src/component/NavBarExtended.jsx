@@ -1,12 +1,26 @@
+import { useNavigate, useLocation } from 'react-router-dom'
 
+export default function NavBarExtended({setIsOpen}) {
+    const navigate = useNavigate()
+    const location = useLocation()
 
-export default function NavBarExtended() {
+    function newChatHandler(event) {
+        event.stopPropagation()
+        if (location.pathname !== "./chat/newchat") {
+            navigate("./newchat")
+            setIsOpen(false)
+            return
+        }
+
+        return
+    }
 
     return (
         <div className="h-[100%] w-[22%] bg-dark-gray p-[1vw] flex flex-col"
             onClick={(e) => e.stopPropagation()}>
 
-            <div className="w-[100%] h-[3.3vw] gradient text-[1.3vw] rounded-lg flex justify-center items-center text-white font-[600]">
+            <div className="w-[100%] h-[3.3vw] gradient text-[1.3vw] rounded-lg flex justify-center items-center text-white font-[600] cursor-pointer"
+                onClick={(e) => newChatHandler(e)}>
                 New Chat
             </div>
             <div className="w-full h-[0.3vw] my-[1vw] bg-gray" />
