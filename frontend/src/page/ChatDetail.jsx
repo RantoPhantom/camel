@@ -11,10 +11,8 @@ const API = "http://localhost:8000/chats"
 export default function ChatDetail() {
     const navigate = useNavigate()
     const { id } = useParams()
-    const [msgFetch, setMsgFetch] = useState(true)
-    const {chatState, updateMsgList, addMsg, deleteMsg, deleteNewChatMsg} = useChatContext()
+    const {chatState, updateMsgList, addMsg, deleteNewChatMsg} = useChatContext()
 
-    
     useEffect(() => {
         if ( !id ) {
             navigate("../newchat")
@@ -62,7 +60,7 @@ export default function ChatDetail() {
             })
         }
    
-    }, [])
+    }, [id])
 
     return(
         <div className="h-[100vh] flex flex-col">

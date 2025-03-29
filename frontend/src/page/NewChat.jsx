@@ -5,7 +5,7 @@ import { useChatContext } from "../context/ChatContextProvider";
 
 export default function NewChat() {
     const {deleteNewChatMsg, updateMsgList} = useChatContext()
-
+    
     useEffect(() => {
         deleteNewChatMsg()
         updateMsgList([])

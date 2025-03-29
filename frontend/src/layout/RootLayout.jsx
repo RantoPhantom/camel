@@ -1,10 +1,19 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Navbar from "../component/Navbar"
-import { Outlet } from "react-router-dom"
+import { Outlet, useNavigate } from "react-router-dom"
 import NavBarExtended from "../component/NavBarExtended"
 import ChatContextProvider from "../context/ChatContextProvider"
+import { getCookie } from "../js/Methods"
 
 export default function RootLayout() {
+    const kick = useNavigate()
+    useEffect(() => {
+        const cookie = getCookie("username")
+    
+        if (!cookie) {
+            kick("../login")
+        }
+    }, [kick])
     const [isOpen, setIsOpen] = useState(false)
 
     return (

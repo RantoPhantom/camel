@@ -211,18 +211,17 @@ async def search_chat(username: str, search_string: str) -> list[Chat]:
     where title like ?
     '''
     res = user_db.cursor.execute(query, [search_string]).fetchall()
-
+    print(res)
     if res == [] :
         return response
 
     for chat in res:
         response.append(
-                Chat(
-                    chat_id=chat[0],
-                    title=chat[1],
-                    date_added=chat[2],
-                    )
+            Chat(
+                chat_id=chat[0],
+                title=chat[1],
+                date_added=chat[2],
                 )
-        return response
+        )
 
     return response
