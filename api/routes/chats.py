@@ -207,7 +207,7 @@ async def search_chat(username: str, search_string: str) -> list[Chat]:
 
     query: str = '''
     select * from chats
-    where chat_id like ?%;
+    where title like ?%;
     '''
     res = user_db.cursor.execute(query, [search_string]).fetchall()
 
