@@ -9,7 +9,7 @@ services:
         restart: false
     develop:
       watch:
-        - action: sync+restart
+        - action: sync
           path: ./frontend
           target: /frontend
           ignore: 
