@@ -201,13 +201,14 @@ async def remove_chat(username: str ,chat_id: int) -> None:
 @router.get("/search")
 async def search_chat(username: str, search_string: str) -> list[Chat]:
     user_db = GetUserDb(username)
+    search_string += "%"
     if user_db == None:
         raise UserNotInDbError
     response: list[Chat] = []
 
     query: str = '''
     select * from chats
-    where title like '?%'
+    where title like ?
     '''
     res = user_db.cursor.execute(query, [search_string]).fetchall()
 
