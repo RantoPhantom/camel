@@ -9,8 +9,6 @@ export default function Chat({chat, setIsOpen}) {
         if (location.pathname !== `/chat/chatdetail/${chat.chat_id}`) {
             navigate(`./chatdetail/${chat.chat_id}`)
         }
-
-        // setIsOpen(false)
     }
 
     return (

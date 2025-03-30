@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 const API = "http://localhost:8000"
 
-export default function ChatInputBox({chat_id}) {
+export default function ChatInputBox({chat_id, setIsLoading}) {
     const location = useLocation()
     const navigate = useNavigate()
     const {addMsg} = useChatContext()
@@ -39,6 +39,7 @@ export default function ChatInputBox({chat_id}) {
     }
 
     function onMessageSent(event) {
+        setIsLoading(true)
         event.preventDefault()
         const newMsg = {
             username: getCookie("username"),
@@ -63,6 +64,8 @@ export default function ChatInputBox({chat_id}) {
             setInputMsg("")
         }).catch(response => {
             console.log(response)
+        }).finally(() => {
+            setIsLoading(false)
         })
     }
 

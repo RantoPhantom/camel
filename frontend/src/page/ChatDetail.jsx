@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { useChatContext } from "../context/ChatContextProvider"
@@ -9,16 +9,23 @@ import AiReply from "../component/AiReply"
 
 const API = "http://localhost:8000/chats"
 export default function ChatDetail() {
+    const messageEnd = useRef()
     const navigate = useNavigate()
     const { id } = useParams()
+    const [isLoading, setIsLoading] = useState(false)
     const {chatState, updateMsgList, addMsg, deleteNewChatMsg} = useChatContext()
+
+    useEffect(() => {
+        messageEnd.current?.scrollIntoView({ behavior: "smooth" })
+    }, [chatState, isLoading])
 
     useEffect(() => {
         if ( !id ) {
             navigate("../newchat")
         }
-
+        
         if (chatState.new_chat_msg.chat_id === Number(id) || chatState.new_chat_msg.msg_content !== "") {
+            setIsLoading(true)
             const newMsg = {
                 username: getCookie("username"),
                 chat_id: Number(id),
@@ -42,7 +49,10 @@ export default function ChatDetail() {
                 addMsg(data)
             }).catch(response => {
                 console.log(response)
+            }).finally(() => {
+                setIsLoading(false)
             })
+            
         } else {
             fetch(`${API}/get-chat-detail?username=${getCookie("username")}&chat_id=${id}`).then(
                 response => {
@@ -57,9 +67,10 @@ export default function ChatDetail() {
                 updateMsgList(data)
             }).catch(response => {
                 console.log(response)
+            }).finally(() => {
+                
             })
-        }
-   
+        }   
     }, [id])
 
     return(
@@ -74,10 +85,21 @@ export default function ChatDetail() {
                         return <></>
                     }
                 })}
+                {isLoading && (
+                    <div className="w-full h-fit flex flex-row text-[1.5vw] items-center gap-[0.5vw] font-[600] text-gray loader">
+                        <div>Generating message</div>
+                        <div className="w-[0.6vw] h-[0.6vw] rounded-3xl bg-gray dot"></div>
+                        <div className="w-[0.6vw] h-[0.6vw] rounded-3xl bg-gray dot"></div>
+                        <div className="w-[0.6vw] h-[0.6vw] rounded-3xl bg-gray dot"></div>
+                    </div>
+                )}
+                <div className="w-full h-1"
+                    ref={messageEnd}></div>
+                
             </div>
             
             <div className="w-full h-fit">
-                <ChatInputBox chat_id={id}/>
+                <ChatInputBox chat_id={id} setIsLoading={setIsLoading}/>
             </div>
         </div>
     )

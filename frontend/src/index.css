@@ -54,4 +54,23 @@ code {
   width: calc(100vw - 35.3vw - 34px)
 }
 
+@keyframes bounce {
+  100% {
+    translate: 0 -0.5vw;
+  }
+}
+
+.loader .dot {
+  animation: bounce 500ms infinite alternate;
+}
+
+.loader .dot:nth-child(3) {
+  animation-delay: 100ms;
+}
+
+.loader .dot:nth-child(4) {
+  animation-delay: 200ms;
+}
+
+
 
