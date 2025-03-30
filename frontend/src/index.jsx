@@ -15,6 +15,7 @@ import ChatDetail from './page/ChatDetail';
 import Login from './page/Login';
 import SignUp from './page/SignUp';
 
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">
@@ -27,17 +28,14 @@ const router = createBrowserRouter(
         <Route path="chatdetail/" element={<Navigate to={"../newchat"} />} />
         <Route path="chatdetail/:id" element={<ChatDetail />} />
       </Route>
+      <Route path="*" element={<Navigate to={"../chat"} />} />
     </Route>
   )
 )
 
-
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-
-  <RouterProvider router={router} />
-
+  <RouterProvider router={router} /> 
 );
 
 // If you want to start measuring performance in your app, pass a function
