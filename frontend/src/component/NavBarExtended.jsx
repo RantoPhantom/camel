@@ -99,9 +99,7 @@ export default function NavBarExtended({setIsOpen}) {
                     onClick={(e) => logoutHandler(e)}>
                     Log Out
                 </div>
-            </div>
-            
-            
+            </div> 
         </div>
     )
 }

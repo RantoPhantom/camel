@@ -12,12 +12,21 @@ export default function ChatInputBox({chat_id}) {
     const [inputMsg, setInputMsg] = useState("")
     const {newChatMsg} = useChatContext()
 
+    function onKeyDownHandler(event) {
+        if (event.key === "Enter") {
+            event.preventDefault()
+            onMessageSentHandler(event)
+        }
+    }
 
     function onChangeHandler(event) {
         setInputMsg(event.target.value)
     }
 
     function onMessageSentHandler(event) {
+        if (inputMsg.length < 1) {
+            return
+        }
         if (location.pathname === "/chat/newchat") {
             onNewChatMessageSent(event)
         } 
@@ -55,8 +64,6 @@ export default function ChatInputBox({chat_id}) {
         }).catch(response => {
             console.log(response)
         })
-
-
     }
 
     function onNewChatMessageSent(event) {
@@ -97,7 +104,8 @@ export default function ChatInputBox({chat_id}) {
             <textarea className={`w-[100%] ${(location.pathname === "/chat/newchat") ? "h-[70%]" : "h-[60%]"} bg-dark-gray resize-none scrollbar text-input text-[1.3vw]`} placeholder="Ask something..."
                 name="input_msg"
                 value={inputMsg}
-                onChange={(e) => onChangeHandler(e)}>
+                onChange={(e) => onChangeHandler(e)}
+                onKeyDown={(e) => onKeyDownHandler(e)}>
             </textarea>
             <div className="w-[100%] h-[0.15vw] bg-gray"/>
             <div className="w-[100%] flex-1 flex flex-row-reverse justify-between">

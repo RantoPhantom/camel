@@ -1,15 +1,32 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { setCookie } from "../js/Methods"
 import { useNavigate } from 'react-router-dom'
 
 const API = "http://localhost:8000/auth/login"
 export default function Login() {
+    const usernameField = useRef()
+    const passwordField = useRef()
     const navigate = useNavigate()
     const [errorMsg, setErrorMsg] = useState("")
     const [formData, setFormData] = useState({
         username: "",
         password: ""
     })
+
+    function onKeyUpHandler(event) {
+        event.preventDefault()
+        if (event.key === "Enter") {
+            if (document.activeElement === usernameField.current) {
+                passwordField.current.focus()
+                return
+            }
+
+            if (document.activeElement === passwordField.current) {
+                loginHandler(event)
+                return
+            }
+        }
+    }
     
     function onChangeHandler(event) {
         const {name, value} = event.target
@@ -23,6 +40,16 @@ export default function Login() {
 
     function loginHandler(event) {
         event.preventDefault()
+        if (formData.username.length < 1) {
+            setErrorMsg("Please enter username.")
+            return
+        }
+
+        if (formData.password.length < 1) {
+            setErrorMsg("Please enter password.")
+            return
+        }
+
         fetch(API, {
             method: "POST",
             headers: {
@@ -61,17 +88,21 @@ export default function Login() {
                         name="username"
                         value={formData.username}
                         onChange={(e) => onChangeHandler(e)}
+                        onKeyUp={(e) => onKeyUpHandler(e)}
+                        ref={usernameField}
                         required></input>
                 </div>
                 <div className="flex flex-col gap-[0.5vw] mt-[1vw]">
                     <div className="text-[1.1vw] font-[500]">
                         Password:
                     </div>
-                    <input type="text" 
+                    <input type="password" 
                         className="text-[1.2vw] w-[22vw] py-[0.2vw] px-[0.5vw] bg-gray rounded-md text-input" 
                         name="password"
                         value={formData.password}
                         onChange={(e) => onChangeHandler(e)}
+                        onKeyUp={(e) => onKeyUpHandler(e)}
+                        ref={passwordField}
                         required></input>
                 </div>
                 {errorMsg && (

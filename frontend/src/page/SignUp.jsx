@@ -1,14 +1,31 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useNavigate } from 'react-router-dom'
 
 const API = "http://localhost:8000/auth/signup"
 export default function SignUp() {
+    const usernameField = useRef()
+    const passwordField = useRef()
     const navigate = useNavigate()
     const [errorMsg, setErrorMsg] = useState("")
     const [formData, setFormData] = useState({
         username: "",
         password: ""
     })
+
+    function onKeyUpHandler(event) {
+        event.preventDefault()
+        if (event.key === "Enter") {
+            if (document.activeElement === usernameField.current) {
+                passwordField.current.focus()
+                return
+            }
+
+            if (document.activeElement === passwordField.current) {
+                signupHandler(event)
+                return
+            }
+        }
+    }
     
     function onChangeHandler(event) {
         const {name, value} = event.target
@@ -20,8 +37,18 @@ export default function SignUp() {
         ))
     }
 
-    function loginHandler(event) {
+    function signupHandler(event) {
         event.preventDefault()
+        if (formData.username.length < 1) {
+            setErrorMsg("Please enter username.")
+            return
+        }
+
+        if (formData.password.length < 1) {
+            setErrorMsg("Please enter password.")
+            return
+        }
+
         const userInfo = {
             username: formData.username,
             icon_file: "",
@@ -64,17 +91,21 @@ export default function SignUp() {
                         name="username"
                         value={formData.username}
                         onChange={(e) => onChangeHandler(e)}
+                        onKeyUp={(e) => onKeyUpHandler(e)}
+                        ref={usernameField}
                         required></input>
                 </div>
                 <div className="flex flex-col gap-[0.5vw] mt-[1vw]">
                     <div className="text-[1.1vw] font-[500]">
                         Password:
                     </div>
-                    <input type="text" 
+                    <input type="password" 
                         className="text-[1.2vw] w-[22vw] py-[0.2vw] px-[0.5vw] bg-gray rounded-md text-input"
                         name="password"
                         value={formData.password}
                         onChange={(e) => onChangeHandler(e)}
+                        onKeyUp={(e) => onKeyUpHandler(e)}
+                        ref={passwordField}
                         required></input>
                 </div>
                 {errorMsg && (
@@ -86,7 +117,7 @@ export default function SignUp() {
                     <p>Have an account already? <a href="./login" className="underline text-blue-300">Log In</a></p>
                 </div>
                 <div className="w-full gradient text-[1.5vw] font-[600] text-center mt-[5vw] py-[0.4vw] rounded-lg mb-[1vw] cursor-pointer"
-                    onClick={(e) => loginHandler(e)}>
+                    onClick={(e) => signupHandler(e)}>
                     Sign Up
                 </div>
             </div>
