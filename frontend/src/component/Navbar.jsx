@@ -16,7 +16,7 @@ export default function Navbar({setIsOpen}) {
     }
 
     return (
-        <nav className="h-full flex flex-col justify-between"
+        <nav className="h-full flex flex-col justify-between cursor-pointer"
             onClick={() => setIsOpen(true)}>
             <div className="w-fit mx-auto mt-[0.5vw]">
                 <i className="p-[0.3vw] ri-add-fill gradient text-white text-[2.8vw] rounded-lg cursor-pointer"

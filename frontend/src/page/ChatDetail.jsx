@@ -6,8 +6,8 @@ import { getCookie } from "../js/Methods"
 import ChatInputBox from "../component/ChatInputBox"
 import UserMsg from "../component/UserMsg"
 import AiReply from "../component/AiReply"
+import { API } from ".."
 
-const API = "http://localhost:8000/chats"
 export default function ChatDetail() {
     const messageEnd = useRef()
     const navigate = useNavigate()
@@ -32,7 +32,7 @@ export default function ChatDetail() {
                 message_content: chatState.new_chat_msg.msg_content
             }
 
-            fetch(`${API}/new-message`, {
+            fetch(`${API}chats/new-message`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ export default function ChatDetail() {
             })
             
         } else {
-            fetch(`${API}/get-chat-detail?username=${getCookie("username")}&chat_id=${id}`).then(
+            fetch(`${API}chats/get-chat-detail?username=${getCookie("username")}&chat_id=${id}`).then(
                 response => {
                     if (response.status === 200) {
                         return response.json()

@@ -2,8 +2,7 @@ import { useState } from "react"
 import { useChatContext } from "../context/ChatContextProvider"
 import { getCookie } from "../js/Methods"
 import { useLocation, useNavigate } from "react-router-dom"
-
-const API = "http://localhost:8000"
+import { API } from ".."
 
 export default function ChatInputBox({chat_id, setIsLoading}) {
     const location = useLocation()
@@ -47,7 +46,7 @@ export default function ChatInputBox({chat_id, setIsLoading}) {
             message_content: inputMsg
         }
 
-        fetch(`${API}/chats/new-message`, {
+        fetch(`${API}chats/new-message`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
@@ -76,7 +75,7 @@ export default function ChatInputBox({chat_id, setIsLoading}) {
             message: inputMsg
         }
 
-        fetch(`${API}/chats/new-chat`, {
+        fetch(`${API}chats/new-chat`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json'
