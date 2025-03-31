@@ -99,7 +99,7 @@ export default function ChatDetail() {
             </div>
             
             <div className="w-full h-fit">
-                <ChatInputBox chat_id={id} setIsLoading={setIsLoading}/>
+                <ChatInputBox chat_id={id} isLoading={isLoading} setIsLoading={setIsLoading}/>
             </div>
         </div>
     )

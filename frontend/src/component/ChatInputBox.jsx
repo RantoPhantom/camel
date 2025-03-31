@@ -4,7 +4,7 @@ import { getCookie } from "../js/Methods"
 import { useLocation, useNavigate } from "react-router-dom"
 import { API } from ".."
 
-export default function ChatInputBox({chat_id, setIsLoading}) {
+export default function ChatInputBox({chat_id, isLoading, setIsLoading}) {
     const location = useLocation()
     const navigate = useNavigate()
     const {addMsg} = useChatContext()
@@ -38,6 +38,9 @@ export default function ChatInputBox({chat_id, setIsLoading}) {
     }
 
     function onMessageSent(event) {
+        if (isLoading) {
+            return
+        }
         setIsLoading(true)
         event.preventDefault()
         const newMsg = {
