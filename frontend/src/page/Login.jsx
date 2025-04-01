@@ -50,7 +50,7 @@ export default function Login() {
             return
         }
 
-        fetch(API, {
+        fetch(`${API}auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
