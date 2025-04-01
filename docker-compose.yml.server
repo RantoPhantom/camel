@@ -2,7 +2,7 @@ services:
   frontend:
     build: ./frontend
     environment: 
-    - API_SERVER=http://192.168.1.42:8000/
+    - REACT_APP_API_SERVER=http://192.168.1.42:8000/
     ports: 
       - 3000:3000
     depends_on:
