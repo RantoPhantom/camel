@@ -1,4 +1,5 @@
 import lorem
+import requests
 from ..error import UserNotInDbError
 from fastapi import APIRouter
 from fastapi.exceptions import HTTPException
@@ -127,22 +128,39 @@ async def new_message(request: NewMessageReq) -> list[Message]:
         ))
 
     global dev
+    ai_response = None
     if dev != "true":
-        return response
+        server_url: str = "http://ai_server:4242/answer"
+        message = {"message": message_content}
+        ai_response = requests.post(server_url, json=message)
+        if ai_response.status_code != 200:
+            raise HTTPException(status_code=500, detail= "somthing went wrong with ai server")
+        ai_response = ai_response.json()["message"]
 
     query: str = '''
     insert into messages(chat_id, message_content, sender, date_added)
     values (?,?,?,?)
     returning message_id, message_content, sender, date_added;
     '''
-    res = user_db.cursor.execute(
-            query, (
-                chat_id, 
-                lorem.paragraph(),
-                "ai",
-                datetime.datetime.now().isoformat()
-                )
-            ).fetchone()
+    if ai_response is None:
+        res = user_db.cursor.execute(
+                query, (
+                    chat_id, 
+                    lorem.paragraph(),
+                    "ai",
+                    datetime.datetime.now().isoformat()
+                    )
+                ).fetchone()
+    else:
+        res = user_db.cursor.execute(
+                query, (
+                    chat_id, 
+                    ai_response,
+                    "ai",
+                    datetime.datetime.now().isoformat()
+                    )
+                ).fetchone()
+
     user_db.connection.commit()
 
     response.append(Message(

@@ -18,7 +18,7 @@ def init_chat_model():
     model = AutoModelForCausalLM.from_pretrained(
             model_path,
             torch_dtype=torch.float16,
-            device_map="cpu"
+            device_map="cuda"
             )
     tokenizer = AutoTokenizer.from_pretrained(model_path, padding_side="left", truncation=True)
 
