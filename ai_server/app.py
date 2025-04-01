@@ -1,6 +1,7 @@
 from multimodal_rag import DiabetesKnowledgeBase
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
 import torch
@@ -20,9 +21,21 @@ class AnswerRes(BaseModel):
 load_dotenv("./.env")
 app = FastAPI()
 
+origins = [
+        "*"
+        ]
+
+app.add_middleware(
+        CORSMiddleware,
+        allow_origins = origins,
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        )
+
 kb = DiabetesKnowledgeBase()
 
-kb.process_all_pdfs()
+#kb.process_all_pdfs()
 #print(kb.get_processed_files_status())
 
 @app.post("/answer")
@@ -40,4 +53,4 @@ async def answer(request: AnswerReq) -> AnswerRes:
 async def healthcheck() -> None:
     return
 
-uvicorn.run(app, host="127.0.0.1", port=4242)
+uvicorn.run(app, host="0.0.0.0", port=4242)
