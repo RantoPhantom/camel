@@ -11,3 +11,4 @@ gradio
 langchain-chroma
 tiktoken
 sentence-transformers
+deepeval

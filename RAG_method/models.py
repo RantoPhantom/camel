@@ -1,19 +1,19 @@
 import os
 import base64
 import requests
-from langchain_community.llms import Ollama
-from langchain_community.chat_models import ChatOllama
+from langchain_ollama import ChatOllama, OllamaLLM
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
+
 
 # Initialize the text-based LLM (llama2)
 def init_text_model():
-    return Ollama(model="llama2")
+    return OllamaLLM(model="llama2")
 
 # Initialize the chat-based LLM (Llama2)
 def init_chat_model():
-    return ChatOllama(model="llama2")
+    return ChatOllama(model="llama2", max_tokens=512)
 
 # Initialize the embeddings model
 def init_embeddings():
@@ -41,7 +41,10 @@ def process_image_with_llava(image_path):
         
         # Prepare the API request
         url = "http://localhost:11434/api/generate"
-        prompt = "Describe this image in detail. If it contains graphs, charts, or illustrations related to diabetes, explain what they show regarding diabetes management, treatment, or monitoring."
+        prompt = """ 
+        Describe this image in detail. If it contains graphs, charts, or illustrations related to diabetes, 
+        explain what they show regarding diabetes management, treatment, or monitoring.
+        """
         
         payload = {
             "model": "llava",

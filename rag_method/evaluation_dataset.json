@@ -1,0 +1,52 @@
+[
+    {
+        "question": " What are some of the features that electronic glucose management systems (EGMS) software packages offer for inpatient diabetes management?",
+        "ground_truth": "Electronic glucose management systems (EGMS) software packages offer several features for inpatient diabetes management, including: \nAuto-population of glucose values from the electronic health record (EHR). \nInsulin dose recommendations. \nRecommendations and alerts for the treatment and prevention of hypoglycemia. \nAlerts to prevent inadvertent low or high glucose levels and to avoid missed insulin doses or blood sugar testing. \nDashboards that graph glucose trends, insulin doses, and other helpful information. \nIntegration with the EHR for data input and to send dose confirmations to the medication administration record (MAR). \nThe ability to factor in diet. \nAlgorithms tailored for both pediatric and adult patients. \nGuidance for transitioning patients from intravenous to subcutaneous insulin based on specific parameters. \nBuilt-in alerts for nurses to check blood glucose and reminders for timely insulin dosing. \nOn-screen prompts to enter carbohydrates and meals eaten to prevent incorrect mealtime insulin dosing. \nAlerts for specific conditions such as the need to correct hypokalemia before initiating IV insulin in diabetic ketoacidosis (DKA) and alerts related to anion gap closure and acidosis resolution when discontinuing IV insulin. \nTools for institutions to analyze and report glucometrics or glucose-related performance metrics",
+        "expected_contexts": ["electronic glucose management systems", "EGMS", "inpatient diabetes management", "auto-population of glucose values", "insulin dose recommendations", "Alerts to prevent inadvertent low or high glucose levels", "Integration with the EHR", "dashboards"]
+    },
+    {
+        "question": "what are the fasting plasma glucose (FPG) criteria used by the World Health Organisation (WHO) and the American Diabetes Association (ADA) to define diabetes?",
+        "ground_truth": "The World Health Organisation (WHO) and the American Diabetes Association (ADA) define diabetes using a fasting plasma glucose (FPG) of 7.0 mmol/L (126 mg/dL) or higher. Fasting is defined as no caloric intake for at least 8 hours.",
+        "expected_contexts": ["fasting plasma glucose", "FPG", "World Health Organisation", "WHO", "American Diabetes Association", "ADA", "7.0 mmol/L", ">=126 mg/dL"]
+    },
+    {
+        "question": "What benefits of continuous glucose monitoring (CGM) in both type 1 and type 2 diabetes?",
+        "ground_truth": "CGM in both type 1 and type 2 diabetes offers several benefits, including improved glycemic control, reduction in hypoglycemia, and increased time in the target glucose range. CGM provides real-time glucose values and trends, allowing for more informed therapy adjustments. It can also help in detecting postprandial hyperglycemia and hypoglycemia, including asymptomatic episodes. Furthermore, CGM use has been linked to improved quality of life and can be integrated with insulin delivery devices to create closed-loop systems. Specialized diabetes teams utilizing CGM have also shown benefits such as lower rates of hyperglycemia and potentially financial advantages through reduced readmission rates and shorter hospital stays.",
+        "expected_contexts": ["continuous glucose monitoring", "CGM", "type 1", "type 2 diabetes", "improved glycemic control", "reduction in hypoglycemia", "increased time in the target glucose range"]
+    },
+    {
+        "question": "What are the current recommendations for screening for presymptomatic type 1 diabetes, including specific autoantibodies mentioned in the 2023 Standards of Care?",
+        "ground_truth": "The current recommendation for screening for presymptomatic type 1 diabetes is through the detection of autoantibodies to: Insulin, Glutamic acid decarboxylase (GAD), Islet antigen 2, Zinc transporter 8.",
+        "expected_contexts": ["recommendations", "screening for presymptomatic type 1 diabetes", "autoantibodies", "2023 Standard of Care", "Insulin", "Glutamic acid decarboxylase", "Islet antigen 2", "Zinc transporter 8"]
+    },
+    {
+        "question": "How do nanoparticles improve the effectiveness of drug delivery systems?",
+        "ground_truth": "Nanoparticles increase the available surface area of sensor-receptor complexes, improve catalytic properties of electrodes, and provide nanoscale sensors, which enhance the measurement of blood glucose levels.",
+        "expected_contexts": ["nanoparticles", "effectiveness of drug delivery systems", "increase the available surface area of sensor-receptor complexes", "improve catalytic properties of electrodes", "nanoscale sensors"]
+    },
+    {
+        "question": "what is the fundamental underlying abnormality in diabetes mellitus, and what is the primary symptom related to elevated blood glucose concentrations?",
+        "ground_truth": "The fundamental underlying abnormality in diabetes mellitus is a net (relative or absolute) deficiency of the hormone insulin. The primary symptom related to elevated blood glucose concentrations is passing large quantities of sweet-tasting urine (polyuria).",
+        "expected_contexts": ["fundamental", "abnormality in diabetes mellitus", "symptom related to elevated blood glucose concentrations", "net deficiency of the hormone insulin", "blood glucose concentrations", "passing large quantities of sweet-tasting urine", "polyuria"]
+    },
+    {
+        "question": "what are some of the new technologies that have become widespread in diabetes therapy?",
+        "ground_truth": "Some of the new technologies that have become widespread in diabetes therapy include continuous glucose monitoring (CGM), continuous subcutaneous insulin infusion (CSII) or insulin pumps, electronic tools for monitoring and managing diabetes, and automated bolus calculators for insulin. Additionally, the use of insulin pens has become a popular option for insulin therapy. The development of closed-loop systems or artificial pancreas is also becoming more commonplace in many countries.",
+        "expected_contexts": ["new technologies", "widespread in diabetes therapy", "continuous glucose monitoring (CGM)", "continuous subcutaneous insulin infusion (CSII)", "insulin pumps", "electronic tools for monitoring and managing diabetes", "automated bolus calculators for insulin"]
+    },
+    {
+        "question": "What are the potential benefits of testosterone replacement therapy for patients with diabetes?",
+        "ground_truth": "The potential benefits include: Improved symptoms of low testosterone, such as loss of libido. Potential improvement in erectile dysfunction (ED), especially in men with diabetes who are also hypogonadal. Several studies have shown a beneficial effect of testosterone on ED in hypogonadal men. In the case history provided, the combination of sildenafil and testosterone replacement gel was opted for to address both ED and loss of libido in a man with diabetes and features of the metabolic syndrome. The aim of testosterone replacement in this case was to maintain testosterone levels above 9 nmol/L.",
+        "expected_contexts": ["benefits of testosterone replacement therapy", "Improved symptoms of low testosterone", "loss of libido", "Potential improvement in erectile dysfunction (ED)"]
+    },
+    {
+        "question": "What are the potential risks associated with the use of nanoparticles in the human body?",
+        "ground_truth": "The potential risks associated with the use of nanoparticles in the human body include: clumping and aggregation of nanoparticles; clearance from the body via excretory pathways, potentially reducing their therapeutic efficacy; accumulation in vital organs, leading to toxicity and potential organ failure, especially with larger nanoparticles; Widespread distribution of smaller nanoparticles throughout various organs, including the liver, lungs, spleen, kidneys, brain, heart, and stomach, raising concerns about long-term effects; Capture by the body's immune system (reticuloendothelial system), particularly for liposomes, potentially limiting their availability; Post-treatment accumulation in specific tissues such as the skin and eyes (with liposomes) and bone joints and organs (with gold nanoparticles); Potential non-specific adhesion of mucoadhesive polymeric nanoparticles to unintended biological surfaces; Poor permeability across mucosal membranes and rapid removal by mucociliary clearance for some nasally administered nanoparticle formulations.",
+        "expected_contexts": ["potential risks", "use of nanoparticles in the human body", "clumping and aggregation of nanoparticles", "clearance from the body via excretory pathways", "potentially reducing their therapeutic efficacy", "accumulation in vital organs", "toxicity and potential organ failure", "reticuloendothelial system", "rapid removal by mucociliary clearance"]
+    },
+    {
+        "question": "what was the estimated global number of adults living with diabetes in 2014, and what percentage of these cases were type 2?",
+        "ground_truth": "In 2014, the estimated global number of adults living with diabetes was 422 million. Of these cases, 85 to 95% were type 2 diabetes.",
+        "expected_contexts": ["estimated global number of adults living with diabetes in 2014", "percentage of adults living with diabetes cases were type 2", "In 2014", "422 million", "85 to 95%"]
+    }
+]
