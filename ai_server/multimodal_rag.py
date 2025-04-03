@@ -26,7 +26,7 @@ class DiabetesKnowledgeBase:
     def __init__(self):
     
         # Initialize the knowledge base with the path to PDF files
-        self.data_dir = "./data/raw-pdfs/"
+        self.data_dir = "./data/"
         self.image_dir = "./data/extracted_images/"
         Path(self.image_dir).mkdir(parents=True, exist_ok=True)
 

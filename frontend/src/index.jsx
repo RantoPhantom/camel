@@ -15,7 +15,7 @@ import ChatDetail from './page/ChatDetail';
 import Login from './page/Login';
 import SignUp from './page/SignUp';
 
-
+export const API = process.env.REACT_APP_API_SERVER
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">

@@ -22,7 +22,7 @@ export default function NewChat() {
                 </p>
             </div>
             <div className="mt-[8vw]">
-                <ChatInputBox chat_id={0} setIsLoading={null}/>
+                <ChatInputBox chat_id={0} isLoading={null} setIsLoading={null}/>
             </div>
         </div>
     )

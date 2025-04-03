@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { useNavigate } from 'react-router-dom'
+import { API } from ".."
 
-const API = "http://localhost:8000/auth/signup"
 export default function SignUp() {
     const usernameField = useRef()
     const passwordField = useRef()
@@ -56,7 +56,7 @@ export default function SignUp() {
             password: formData.password
         }
 
-        fetch(API, {
+        fetch(`${API}auth/signup`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -73,7 +73,7 @@ export default function SignUp() {
             navigate("../login")
         }).catch(response => {
             console.log(response)
-            setErrorMsg("Something went wrong. Please try again!")
+            setErrorMsg("Account existed. Please try again!")
         })
     }
     return (

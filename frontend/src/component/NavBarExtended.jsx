@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { deleteCookie, getCookie } from '../js/Methods'
 import Chat from './Chat'
-
-const API = "http://localhost:8000/chats"
+import { API } from ".."
 
 export default function NavBarExtended({setIsOpen}) {
     const navigate = useNavigate()
@@ -12,7 +11,7 @@ export default function NavBarExtended({setIsOpen}) {
     const [search, setSearch] = useState("")
 
     useEffect(() => {
-        fetch(`${API}/get-history?username=${getCookie("username")}`).then(
+        fetch(`${API}chats/get-history?username=${getCookie("username")}`).then(
             response => {
                 if (response.status === 200) {
                     return response.json()
@@ -51,7 +50,7 @@ export default function NavBarExtended({setIsOpen}) {
 
     function onKeyDownHandler(event) {
         if (event.key === 'Enter') {
-            fetch(`${API}/search?username=${getCookie("username")}&search_string=${search}`).then(
+            fetch(`${API}chats/search?username=${getCookie("username")}&search_string=${search}`).then(
                 response => {
                     if (response.status === 200) {
                         return response.json()

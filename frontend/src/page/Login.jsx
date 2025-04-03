@@ -1,8 +1,8 @@
 import { useRef, useState } from "react"
 import { setCookie } from "../js/Methods"
 import { useNavigate } from 'react-router-dom'
+import { API } from ".."
 
-const API = "http://localhost:8000/auth/login"
 export default function Login() {
     const usernameField = useRef()
     const passwordField = useRef()
@@ -50,7 +50,7 @@ export default function Login() {
             return
         }
 
-        fetch(API, {
+        fetch(`${API}auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

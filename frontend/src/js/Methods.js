@@ -2,7 +2,7 @@ export function setCookie(cookie_name, cookie_value, timeout_days) {
     const date = new Date();
     date.setTime(date.getTime() + (timeout_days * 24 * 60 * 60 * 1000));
     let expires = `expires=${date.toUTCString()}`;
-    document.cookie = `${cookie_name}=${cookie_value}; ${expires}; SameSite=None; path=/; Secure`
+    document.cookie = `${cookie_name}=${cookie_value}; ${expires}; SameSite=Lax; path=/;`
 }
 
 export function getCookie(cookie_name) {
